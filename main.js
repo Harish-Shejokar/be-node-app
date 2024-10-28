@@ -1,11 +1,15 @@
 const express = require("express");
 const setupRoutes = require("./routes");
 require("dotenv").config();
+const db = require(`./db/database`);
 
 const app = express();
 
 //-------routes funciton call------------
 setupRoutes(app)
+
+//monogoDb-connection
+db.mongoDbConnection();
 
 
 const portNumber = process.env.PORT;
@@ -15,6 +19,6 @@ app.listen(portNumber, () => {
 })
 
 
-// -----------------listing-server my http module ----------------
+// -----------------listioning-server by http module ----------------
 // const http = require("http");
 // http.createServer().listen(4000, console.log("server listing on port - 4000"))
