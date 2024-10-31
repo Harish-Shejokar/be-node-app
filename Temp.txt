@@ -1,0 +1,5 @@
+POINT TO REMEMBER 
+
+1. findOne and findById do same thing, but if you want to find data by id then use findById method , but by findOne method we can search data through other entity of schema.
+
+2. 
