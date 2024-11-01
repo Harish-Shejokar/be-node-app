@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const userModel = require("../../schema/usersSchema");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 
 
 const encryptPassword =  async (password) => {
@@ -40,13 +42,8 @@ const signupValidation = async (payload) => {
 }
 
 const loginValidation = async (payload) => {
-    const userName = payload?.user_name;
     const userEmail = payload?.user_email;
     const password = payload?.password;
-
-    if (userName == `` || userName == undefined) {
-        throw new Error(`Enter valid UserName`);
-    }
 
     if (userEmail == `` || userEmail == undefined) {
         throw new Error(`Enter valid Email`);
@@ -63,10 +60,23 @@ const loginValidation = async (payload) => {
     const passwordMatched = await bcrypt.compare(password, hashedPass);
    
     if (!passwordMatched) {
-        throw new Error(`Wrong Password , Enter Valid password`);
+        throw new Error(`Entered Wrong Password`);
     }
 
     return userExist;
+}
+
+
+const createAuthToken = async (payload) => {
+    const jwtSecret = process.env.JWT_SECRET;
+    const userInfo = { userEmail: payload.user_email };
+    const toeknExpireTime = Math.floor(Date.now() / 1000 + (30 * 60));
+    const token = await jwt.sign({
+        exp : toeknExpireTime,
+        data :userInfo
+    }, jwtSecret)
+    console.log(token);
+    return token;
 }
 
 
@@ -88,12 +98,14 @@ router.post("/login", async (req, res) => {
     try {
         const { body } = req;
         //validation and return user
-        const user  = await loginValidation(body);
+        const user = await loginValidation(body);
+        const authToken = await createAuthToken(body);
         res.send({ user});
     } catch (error) {
         console.log(error)
         res.send({"message": error.message})
     }
 })
+
 
 module.exports = router;

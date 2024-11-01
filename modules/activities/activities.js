@@ -4,7 +4,6 @@ const router = require("express").Router();
 
 router.get("/", async (req, res) => {
     try {
-        // console.log("getall-------------");
         const data = await activitiesModel.find();
         res.send({ message: "activities data" , data});
     } catch (error) {
