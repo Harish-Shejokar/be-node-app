@@ -2,9 +2,9 @@ const activitiesModel = require("../../schema/activitiesSchema");
 const router = require("express").Router();
 
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, emailQuery) => {
     try {
-        const data = await activitiesModel.find();
+        const data = await activitiesModel.find(emailQuery);
         res.send({ message: "activities data" , data});
     } catch (error) {
         console.log(error);
@@ -26,6 +26,7 @@ router.post("/", async (req, res) => {
     try {
         // console.log("add-activity-------------");
         const body = req.body;
+        const payload = {...body,}
         // console.log(body);
         await activitiesModel.create(body);
         // console.log(data);

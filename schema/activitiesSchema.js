@@ -4,6 +4,7 @@ const activitiesSchema = new mongoose.Schema(
   {
     activity_name: { type: String, required: true },
     activity_description: { type: String, required: true },
+    created_by : {type:String, required: true},
   },
   {
     timestamps: {

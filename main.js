@@ -3,10 +3,11 @@ const setupRoutes = require("./routes");
 require("dotenv").config();
 const db = require(`./db/database`);
 const bodyParser = require(`body-parser`);
-
+const cors = require('cors')
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors())
 //-------routes funciton call------------
 setupRoutes(app)
 

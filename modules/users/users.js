@@ -8,9 +8,9 @@ const jwt = require("jsonwebtoken");
 const encryptPassword =  async (password) => {
     const saltRound = 10;
     const saltPass = await bcrypt.genSalt(saltRound);
-    const newPassword = await bcrypt.hash(password, saltPass);
-    console.log(newPassword);
-    return newPassword;
+    const hashedPassword = await bcrypt.hash(password, saltPass);
+    // console.log(hashedPassword);
+    return hashedPassword;
 }
 
 const signupValidation = async (payload) => {
@@ -75,7 +75,7 @@ const createAuthToken = async (payload) => {
         exp : toeknExpireTime,
         data :userInfo
     }, jwtSecret)
-    console.log(token);
+    // console.log(token);
     return token;
 }
 
@@ -90,7 +90,7 @@ router.post("/signup", async (req, res) => {
         res.send({ message: "New-User SignUp Successfully" });
     } catch (error) {
         console.log(error)
-        res.send({"message": error.message})
+        res.status(500).send({"message": error.message})
     }
 })
 
@@ -100,10 +100,29 @@ router.post("/login", async (req, res) => {
         //validation and return user
         const user = await loginValidation(body);
         const authToken = await createAuthToken(body);
-        res.send({ user});
+        res.send({ user, authToken});
     } catch (error) {
         console.log(error)
-        res.send({"message": error.message})
+        res.status(500).send({"message": error.message})
+    }
+})
+
+router.get("/decrypt", async (req, res) => {
+    try {
+        const headers = req.headers.authorization;
+        // console.log(headers);
+        if (!headers) {
+            throw new Error(`Pls add authorization in headers`)
+        }
+        const token = headers.split(' ')[1];
+        
+        const jwtSecret = process.env.JWT_SECRET;
+        const decryptToken = jwt.verify(token, jwtSecret);
+        const decryptInfo = decryptToken.data;
+        res.send({ data: decryptInfo });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({"message": error.message})
     }
 })
 

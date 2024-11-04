@@ -5,7 +5,7 @@ const userUtils = require("../modules/users/userUtils");
 const authMiddleware = async (req, res,next) => {
     try {
         const headers = req.headers.authorization;
-        console.log(headers);
+        // console.log(headers);
         if (!headers) {
             throw new Error(`Pls add authorization in headers`)
         }
@@ -23,10 +23,11 @@ const authMiddleware = async (req, res,next) => {
         
         //check-user exist in db 
         const emailQuery = { user_email: data.userEmail };
-        const userExist = await userUtils.getUserByQuery(emailQuery);
+        const userExist = await userUtils.getUserByQuery();
         if (!userExist) {
             throw new Error("user not exist");
         }
+        // req.body.created_by = data.userEmail;
         next();
     } catch (error) {
         console.log(error);
